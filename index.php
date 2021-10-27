@@ -1,40 +1,64 @@
 <?php
 
-const RESULT_WINNER = 1;
-const RESULT_LOSER = -1;
-const RESULT_DRAW = 0;
-const RESULT_POSSIBILITIES = [RESULT_WINNER, RESULT_LOSER, RESULT_DRAW];
+declare(strict_types=1);
 
-function probabilityAgainst(int $levelPlayerOne, int $againstLevelPlayerTwo)
+class Pont
 {
-    return 1 / (1 + (10 ** (($againstLevelPlayerTwo - $levelPlayerOne) / 400)));
-}
+    private const SURFACE_TEXT = 'Ce pont mesure %d m².';
+    // private string $unite = ' m²';
+    private float $longueur;
+    private float $largeur;
 
-function setNewLevel(int &$levelPlayerOne, int $againstLevelPlayerTwo, int $playerOneResult)
-{
-    if (!in_array($playerOneResult, RESULT_POSSIBILITIES)) {
-        trigger_error(sprintf('Invalid result. Expected %s', implode(' or ', RESULT_POSSIBILITIES)));
+    // appliquer le principe d’encapsulation avec set et get
+    public function setLongueur(float $longueur): void  // setter / mutateur
+    {
+        if ($longueur < 0) {
+            trigger_error(
+                'La longueur est trop courte. (min 1)',
+                E_USER_ERROR
+            );
+        }
+
+        $this->longueur = $longueur;
     }
 
-    $levelPlayerOne += (int) (32 * ($playerOneResult - probabilityAgainst($levelPlayerOne, $againstLevelPlayerTwo)));
+    public function setLargeur(float $largeur): void  // setter / mutateur
+    {
+        if ($largeur < 0) {
+            trigger_error(
+                'La longueur est trop courte. (min 1)',
+                E_USER_ERROR
+            );
+        }
+
+        $this->largeur = $largeur;
+    }
+
+    public function getLongueur(): float   // getter / accesseur
+    {
+        return $this->longueur;
+    }
+
+    public function getLargeur(): float // getter / accesseur
+    {
+        return $this->largeur;
+    }
+
+    public function getSurface(): string
+    {
+        return ($this->longueur * $this->largeur) . $this->unite;
+    }
+
+    public function printSurface(): void
+    {
+        echo sprintf(self::SURFACE_TEXT, $this->getSurface());
+    }
 }
 
-$greg = 400;
-$jade = 800;
+$towerBridge = new Pont;
+$towerBridge->setLongueur(500);
+$towerBridge->setLargeur(80);
 
-echo sprintf(
-    'Greg à %.2f%% chance de gagner face a Jade',
-    probabilityAgainst($greg, $jade) * 100
-) . PHP_EOL;
+$towerBridge->printSurface();
 
-// Imaginons que greg l'emporte tout de même.
-setNewLevel($greg, $jade, RESULT_WINNER);
-setNewLevel($jade, $greg, RESULT_LOSER);
-
-echo sprintf(
-    'les niveaux des joueurs ont évolués vers %s pour Greg et %s pour Jade',
-    $greg,
-    $jade
-);
-
-exit(0);
+// echo 'Pont en surface de ' . $towerBridge->getSurface() . ' pour longueur de ' . $towerBridge->getLongueur() . ' m et largeur de ' . $towerBridge->getLargeur() . ' m.';
