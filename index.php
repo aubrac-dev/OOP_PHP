@@ -1,126 +1,40 @@
 <?php
-/*
-$date0 = new DateTime;
 
-// déclaration par référence avec le symbole &
-function foo($var)
+const RESULT_WINNER = 1;
+const RESULT_LOSER = -1;
+const RESULT_DRAW = 0;
+const RESULT_POSSIBILITIES = [RESULT_WINNER, RESULT_LOSER, RESULT_DRAW];
+
+function probabilityAgainst(int $levelPlayerOne, int $againstLevelPlayerTwo)
 {
-    $var = 2;
+    return 1 / (1 + (10 ** (($againstLevelPlayerTwo - $levelPlayerOne) / 400)));
 }
 
-
-$a = 1;
-foo($a);
-//echo $a;
-// $a vaut toujours 1
-
-//-----------------------
-
-// déclaration par référence avec le symbole &
-function foo1(&$var)
+function setNewLevel(int &$levelPlayerOne, int $againstLevelPlayerTwo, int $playerOneResult)
 {
-    $var = 2;
-}
-
-$a = 1;
-foo1($a);
-//echo $a;
-// $a vaut 2 maintenant
-
-//------------------------
-
-// déclaration de référence à l’objet
-function foo2(DateTime $date)
-{
-    $date->modify('+1 day'); // permet d'ajouter 1 jour à la date
-}
-
-$date = new DateTime;
-foo2($date);
-// $date est maintenant au lendemain
-
-//---------------------------
-
-$dateUne = new DateTime;
-$dateDeux = $dateUne;
-
-$dateDeux->modify('+1 day');
-
-//var_dump($dateUne, $dateDeux);
-
-// $dateUne et $dateDeux désignent le même objet en mémoire.
-// Ils sont donc tous les deux au lendemain
-
-//--------------------
-
-$date = new DateTime;
-//echo $date->format('d/m/Y');
-
-//-------------------------------
-
-// D’abord, l’exemple sans chaînage :
-$date = new DateTime;
-$newDate = $date->modify('+1 day');
-
-//echo $date->format('d/m/Y') . PHP_EOL;
-//echo $newDate->format('d/m/Y') . PHP_EOL;
-
-// Maintenant avec le chaînage. Nous exploitons directement
-// l'objet qui nous est retourné sans le stocker dans une variable :
-$formatedDate = $date->modify('+1 day')->format('d/m/Y');
-//echo $formatedDate . PHP_EOL;
-
-//-------------------
-
-$date = new DateTime;
-$newDate = $date->modify('+1 day');
-
-//echo $date->modify('+1 day')->format('d/m/Y') . PHP_EOL;
-//echo $newDate->format('d/m/Y') . PHP_EOL;
-
-//------------------------------
-
-$date = new DateTimeImmutable;
-$newDate = $date->modify('+1 day');
-
-//echo $date->format('d/m/Y') . PHP_EOL;
-//echo $newDate->format('d/m/Y') . PHP_EOL;
-
-//-------------------------------------
-
-
-$s = <<<JSON
-{
-    "date":"2021-03-23 07:35:44.011207",
-    "timezone_type":3,
-    "timezone":"Europe/Paris"
-}
-JSON;
-
-//var_dump(json_decode($s));
-//=========================================================================================
-class NomDeLaClasse
-{
-}
-*/
-
-declare(strict_types=1); //  demandant à PHP d'être exigeant avec le typage
-
-class Pont
-{
-    public float $longueur;
-    public float $largeur;
-
-    public function getSurface(): float
-    {
-        return $this->longueur * $this->largeur;
+    if (!in_array($playerOneResult, RESULT_POSSIBILITIES)) {
+        trigger_error(sprintf('Invalid result. Expected %s', implode(' or ', RESULT_POSSIBILITIES)));
     }
+
+    $levelPlayerOne += (int) (32 * ($playerOneResult - probabilityAgainst($levelPlayerOne, $againstLevelPlayerTwo)));
 }
 
-$pont = new Pont;
-$pont->longueur = 286.0;
-$pont->largeur = 15.0;
+$greg = 400;
+$jade = 800;
 
-$surface = $pont->getSurface();
+echo sprintf(
+    'Greg à %.2f%% chance de gagner face a Jade',
+    probabilityAgainst($greg, $jade) * 100
+) . PHP_EOL;
 
-var_dump($surface);
+// Imaginons que greg l'emporte tout de même.
+setNewLevel($greg, $jade, RESULT_WINNER);
+setNewLevel($jade, $greg, RESULT_LOSER);
+
+echo sprintf(
+    'les niveaux des joueurs ont évolués vers %s pour Greg et %s pour Jade',
+    $greg,
+    $jade
+);
+
+exit(0);
