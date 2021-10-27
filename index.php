@@ -6,6 +6,7 @@ class Pont
 {
     // ous avons renommé $unite en UNITE : les constantes ne sont pas préfixées par $ et par convention sont écrites en UPPER_SNAKE_CAS
     private const UNITE = 'm²';  // constante de classe s’écrit avec le mot-clé const est une valeur lui est donnée directement
+
     private float $longueur;
     private float $largeur;
 
