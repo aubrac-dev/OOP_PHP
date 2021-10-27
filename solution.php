@@ -20,13 +20,13 @@ class Encounter
             trigger_error(sprintf('Invalid result. Expected %s', implode(' or ', self::RESULT_POSSIBILITIES)));
         }
 
-        $playerOne->level += round(32 * ($playerOneResult - self::probabilityAgainst($playerOne, $playerTwo)));
+        $playerOne->level += round(32 * ($playerOneResult -  self::probabilityAgainst($playerOne, $playerTwo)));
     }
 }
 
 class Player
 {
-    public int $level;
+    public float $level;
 }
 
 $greg = new Player;
